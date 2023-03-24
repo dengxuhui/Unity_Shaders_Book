@@ -68,7 +68,7 @@ Shader "dengxuhui/MaskTexture"
                 return o;
             }
 
-            fixed4 frag(v2f i)
+            fixed4 frag(v2f i) : SV_Target
             {
                 fixed3 tangentLightDir = normalize(i.lightDir);
                 fixed3 tangentViewDir = normalize(i.viewDir);

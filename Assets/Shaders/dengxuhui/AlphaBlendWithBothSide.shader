@@ -108,6 +108,7 @@ Shader "dengxuhui/AlphaBlendWithBothSide"
             float _Alpha;
 
             v2f vert(appdata v)
+            
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
