@@ -65,10 +65,9 @@ Shader "Unity Shaders Book/Chapter 9/Alpha Test With Shadow" {
 				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
 				
 				fixed4 texColor = tex2D(_MainTex, i.uv);
-
-				clip (texColor.a - _Cutoff);
+				fixed4 albedo = texColor.rgba * _Color.rgba;
 				
-				fixed3 albedo = texColor.rgb * _Color.rgb;
+				clip (albedo.a - _Cutoff);
 				
 				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 				
@@ -83,5 +82,5 @@ Shader "Unity Shaders Book/Chapter 9/Alpha Test With Shadow" {
 			ENDCG
 		}
 	} 
-	FallBack "Transparent/Cutout/VertexLit"
+	FallBack "VertexLit"
 }
