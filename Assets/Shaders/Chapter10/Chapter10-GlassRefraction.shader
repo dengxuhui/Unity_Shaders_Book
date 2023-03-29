@@ -6,7 +6,7 @@ Shader "Unity Shaders Book/Chapter 10/Glass Refraction" {
 		_MainTex ("Main Tex", 2D) = "white" {}
 		_BumpMap ("Normal Map", 2D) = "bump" {}
 		_Cubemap ("Environment Cubemap", Cube) = "_Skybox" {}
-		_Distortion ("Distortion", Range(0, 100)) = 10
+		_Distortion ("Distortion", Range(0, 200)) = 10
 		_RefractAmount ("Refract Amount", Range(0.0, 1.0)) = 1.0
 	}
 	SubShader {
@@ -82,6 +82,7 @@ Shader "Unity Shaders Book/Chapter 10/Glass Refraction" {
 				// Compute the offset in tangent space
 				float2 offset = bump.xy * _Distortion * _RefractionTex_TexelSize.xy;
 				i.scrPos.xy = offset * i.scrPos.z + i.scrPos.xy;
+				// 屏幕RT需要使用屏幕坐标来采样
 				fixed3 refrCol = tex2D(_RefractionTex, i.scrPos.xy/i.scrPos.w).rgb;
 				
 				// Convert the normal to world space
