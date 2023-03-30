@@ -61,7 +61,7 @@ Shader "Unity Shaders Book/Chapter 11/Image Sequence Animation" {
 				uv.y /= _VerticalAmount;
 				
 				fixed4 c = tex2D(_MainTex, uv);
-				c.rgb *= _Color;
+				c.rgba *= _Color;
 				
 				return c;
 			}

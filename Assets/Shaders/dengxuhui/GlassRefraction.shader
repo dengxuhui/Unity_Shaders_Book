@@ -43,7 +43,7 @@ Shader "dengxuhui/GlassRefraction"
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
-                float3 tangent : TANGENT;
+                float4 tangent : TANGENT;
                 float2 texcoord : TEXCOORD0;
             };
 
