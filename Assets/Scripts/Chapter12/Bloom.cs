@@ -23,7 +23,7 @@ public class Bloom : PostEffectsBase {
 	[Range(1, 8)]
 	public int downSample = 2;
 
-	[Range(0.0f, 4.0f)]
+	[Range(0.0f, 1.0f)]
 	public float luminanceThreshold = 0.6f;
 
 	void OnRenderImage (RenderTexture src, RenderTexture dest) {

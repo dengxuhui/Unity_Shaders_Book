@@ -51,12 +51,12 @@ Shader "dengxuhui/GaussianBlur"
 
         fixed4 fragBlur(v2f i) : SV_Target
         {
-            const float3 weight[3] = {0.4026, 0.2442, 0.0545};
+            const float weight[3] = {0.4026, 0.2442, 0.0545};
             fixed3 sum = tex2D(_MainTex, i.uv[0]).rgb * weight[0];
             for (int it = 1; it < 3; it++)
             {
-                sum += tex2D(_MainTex, i.uv[it * 2 - 1].rgb * weight[it]);
-                sum += tex2D(_MainTex, i.uv[it * 2].rgb * weight[it]);
+                sum += tex2D(_MainTex, i.uv[it * 2 - 1]).rgb * weight[it];
+                sum += tex2D(_MainTex, i.uv[it * 2]).rgb * weight[it];
             }
             return fixed4(sum, 1.0);
         }
