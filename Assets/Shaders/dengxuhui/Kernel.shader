@@ -56,6 +56,8 @@ Shader "dengxuhui/Kernerl"
             fixed luminance(fixed4 color)
             {
                 return 0.2125 * color.r + 0.7154 * color.g + 0.0721 * color.b;
+                // return 0.3 * color.r + 0.6 * color.g + 0.1 * color.b;
+                // return (color.r + color.g + color.b) / 3;
             }
 
             half Sobel(v2f i)
