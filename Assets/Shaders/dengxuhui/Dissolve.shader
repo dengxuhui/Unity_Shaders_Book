@@ -1,17 +1,14 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Unity Shaders Book/Chapter 15/Dissolve"
+Shader "dengxuhui/Dissolve"
 {
     Properties
     {
-        _BurnAmount ("Burn Amount", Range(0.0, 1.0)) = 0.0
-        _LineWidth("Burn Line Width", Range(0.0, 0.2)) = 0.1
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-        _BumpMap ("Normal Map", 2D) = "bump" {}
-        _BurnFirstColor("Burn First Color", Color) = (1, 0, 0, 1)
-        _BurnSecondColor("Burn Second Color", Color) = (1, 0, 0, 1)
-        _BurnMap("Burn Map", 2D) = "white"{}
+        _BurnAmount("Burn Amount",Range(0,1)) = 0.5
+        _LineWidth("Burn Line Width",Range(0,1)) = 0.1
+        _MainTex("Base (RGB)", 2D) = "white" {}
+        _BumpMap("Normal Map", 2D) = "bump" {}
+        _BurnFirstColor("Burn First Color",Color) = (1,1,1,1)
+        _BurnSecondColor("Burn Second Color",Color) = (1,1,1,1)
+        _BurnMap("Burn Map",2D) = "white" {}
     }
     SubShader
     {
@@ -19,22 +16,19 @@ Shader "Unity Shaders Book/Chapter 15/Dissolve"
         {
             "RenderType"="Opaque" "Queue"="Geometry"
         }
-
         Pass
         {
+
             Tags
             {
                 "LightMode"="ForwardBase"
             }
-
             Cull Off
-
             CGPROGRAM
             #include "Lighting.cginc"
             #include "AutoLight.cginc"
 
             #pragma multi_compile_fwdbase
-
             #pragma vertex vert
             #pragma fragment frag
 
@@ -73,16 +67,13 @@ Shader "Unity Shaders Book/Chapter 15/Dissolve"
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
-
                 o.uvMainTex = TRANSFORM_TEX(v.texcoord, _MainTex);
                 o.uvBumpMap = TRANSFORM_TEX(v.texcoord, _BumpMap);
                 o.uvBurnMap = TRANSFORM_TEX(v.texcoord, _BurnMap);
-
                 TANGENT_SPACE_ROTATION;
                 o.lightDir = mul(rotation, ObjSpaceLightDir(v.vertex)).xyz;
-
-                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                //接收阴影计算
                 TRANSFER_SHADOW(o);
 
                 return o;
@@ -90,26 +81,20 @@ Shader "Unity Shaders Book/Chapter 15/Dissolve"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                fixed3 burn = tex2D(_BurnMap, i.uvBurnMap).rgb;
-
+                fixed3 burn = tex2D(_BumpMap, i.uvBumpMap).rgb;
                 clip(burn.r - _BurnAmount);
-
                 float3 tangentLightDir = normalize(i.lightDir);
-                fixed3 tangentNormal = UnpackNormal(tex2D(_BumpMap, i.uvBumpMap));
-
+                //使用UnpackNormal将法线从[0,1]转换到[-1,1]
+                float3 tangentNormal = UnpackNormal(tex2D(_BumpMap, i.uvBumpMap));
                 fixed3 albedo = tex2D(_MainTex, i.uvMainTex).rgb;
-
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
-
-                fixed3 diffuse = _LightColor0.rgb * albedo * max(0, 0.5 * dot(tangentNormal, tangentLightDir) + 0.5);
-
+                fixed3 diffuse = _LightColor0.rgb * albedo * max(0, dot(tangentNormal, tangentLightDir));
                 fixed t = 1 - smoothstep(0.0, _LineWidth, burn.r - _BurnAmount);
-                fixed3 burnColor = lerp(_BurnFirstColor, _BurnSecondColor, t);
+                float3 burnColor = lerp(_BurnFirstColor, _BurnSecondColor, t);
                 burnColor = pow(burnColor, 5);
-
                 UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos);
                 fixed3 finalColor = lerp(ambient + diffuse * atten, burnColor, t * step(0.0001, _BurnAmount));
-                // fixed3 finalColor = ambient + diffuse * atten;
+
                 return fixed4(finalColor, 1);
             }
             ENDCG
@@ -162,6 +147,7 @@ Shader "Unity Shaders Book/Chapter 15/Dissolve"
             }
             ENDCG
         }
+
+        Pass {}
     }
-    FallBack "Diffuse"
 }
